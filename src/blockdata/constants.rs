@@ -41,17 +41,17 @@ pub const WITNESS_SCALE_FACTOR: usize = 4;
 /// The maximum allowed number of signature check operations in a block
 pub const MAX_BLOCK_SIGOPS_COST: i64 = 80_000;
 /// Mainnet (bitcoin) pubkey address prefix.
-pub const PUBKEY_ADDRESS_PREFIX_MAIN: u8 = 0x1e;
+pub const PUBKEY_ADDRESS_PREFIX_MAIN: u8 = 16;
 /// Mainnet (bitcoin) script address prefix.
-pub const SCRIPT_ADDRESS_PREFIX_MAIN: u8 = 0x16; // 0x05
+pub const SCRIPT_ADDRESS_PREFIX_MAIN: u8 = 5; // 0x05
 /// Test (tesnet, signet, regtest) pubkey address prefix.
-pub const PUBKEY_ADDRESS_PREFIX_TEST: u8 = 0x71; 
+pub const PUBKEY_ADDRESS_PREFIX_TEST: u8 = 47; 
 /// Test (tesnet, signet, regtest) script address prefix.
-pub const SCRIPT_ADDRESS_PREFIX_TEST: u8 = 0xc4;
+pub const SCRIPT_ADDRESS_PREFIX_TEST: u8 = 5;
 /// The maximum allowed script size.
 pub const MAX_SCRIPT_ELEMENT_SIZE: usize = 520;
 /// How may blocks between halvings.
-pub const SUBSIDY_HALVING_INTERVAL: u32 = 210_000;
+pub const SUBSIDY_HALVING_INTERVAL: u32 = 100_000;
 /// Maximum allowed value for an integer in Script.
 pub const MAX_SCRIPTNUM_VALUE: u32 = 0x80000000; // 2^31
 
@@ -80,7 +80,7 @@ fn bitcoin_genesis_tx() -> Transaction {
     // Inputs
     let in_script = script::Builder::new().push_scriptint(486604799)
                                           .push_scriptint(4)
-                                          .push_slice(b"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks")
+                                          .push_slice(b"Wed May 1, 2013: Spot gold fell 1.3 percent to $1,457.90 an ounce by 3:11 p.m. EDT (1911 GMT)")
                                           .into_script();
     ret.input.push(TxIn {
         previous_output: OutPoint::null(),
@@ -91,7 +91,7 @@ fn bitcoin_genesis_tx() -> Transaction {
 
     // Outputs
     let script_bytes: Result<Vec<u8>, hex::Error> =
-        HexIterator::new("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f").unwrap()
+        HexIterator::new("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9").unwrap()
             .collect();
     let out_script = script::Builder::new()
         .push_slice(script_bytes.unwrap().as_slice())
@@ -118,9 +118,9 @@ pub fn genesis_block(network: Network) -> Block {
                     version: 1,
                     prev_blockhash: Hash::all_zeros(),
                     merkle_root,
-                    time: 1231006505,
-                    bits: 0x1d00ffff,
-                    nonce: 2083236893
+                    time: 1367394064,
+                    bits: 0x1e0ffff0,
+                    nonce: 112158625
                 },
                 txdata,
             }
@@ -131,9 +131,9 @@ pub fn genesis_block(network: Network) -> Block {
                     version: 1,
                     prev_blockhash: Hash::all_zeros(),
                     merkle_root,
-                    time: 1296688602,
-                    bits: 0x1d00ffff,
-                    nonce: 414098458
+                    time: 1369199888,
+                    bits: 0x1e0ffff0,
+                    nonce: 12097647
                 },
                 txdata,
             }
@@ -144,9 +144,9 @@ pub fn genesis_block(network: Network) -> Block {
                     version: 1,
                     prev_blockhash: Hash::all_zeros(),
                     merkle_root,
-                    time: 1598918400,
-                    bits: 0x1e0377ae,
-                    nonce: 52613770
+                    time: 1369199888,
+                    bits: 0x1e0ffff0,
+                    nonce: 12097647
                 },
                 txdata,
             }
@@ -168,10 +168,10 @@ pub fn genesis_block(network: Network) -> Block {
 }
 
 // Mainnet value can be verified at https://github.com/lightning/bolts/blob/master/00-introduction.md
-const GENESIS_BLOCK_HASH_BITCOIN: [u8; 32] = [111, 226, 140, 10, 182, 241, 179, 114, 193, 166, 162, 70, 174, 99, 247, 79, 147, 30, 131, 101, 225, 90, 8, 156, 104, 214, 25, 0, 0, 0, 0, 0];
-const GENESIS_BLOCK_HASH_TESTNET: [u8; 32] = [67, 73, 127, 215, 248, 38, 149, 113, 8, 244, 163, 15, 217, 206, 195, 174, 186, 121, 151, 32, 132, 233, 14, 173, 1, 234, 51, 9, 0, 0, 0, 0];
+const GENESIS_BLOCK_HASH_BITCOIN: [u8; 32] = hex!("a2effa738145e377e08a61d76179c21703e13e48910b30a2a87f0dfe794b64c6");
+const GENESIS_BLOCK_HASH_TESTNET: [u8; 32] = hex!("324635c8e36f663b0adb126a21ad0bd7fa43cc5c5f15aec992bf4dde650bc0ea");
+const GENESIS_BLOCK_HASH_REGTEST: [u8; 32] = hex!("324635c8e36f663b0adb126a21ad0bd7fa43cc5c5f15aec992bf4dde650bc0ea");
 const GENESIS_BLOCK_HASH_SIGNET: [u8; 32] = [246, 30, 238, 59, 99, 163, 128, 164, 119, 160, 99, 175, 50, 178, 187, 201, 124, 159, 249, 240, 31, 44, 66, 37, 233, 115, 152, 129, 8, 0, 0, 0];
-const GENESIS_BLOCK_HASH_REGTEST: [u8; 32] = [6, 34, 110, 70, 17, 26, 11, 89, 202, 175, 18, 96, 67, 235, 91, 191, 40, 195, 79, 58, 94, 51, 42, 31, 199, 178, 183, 60, 241, 136, 145, 15];
 
 /// The uniquely identifying hash of the target blockchain.
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
